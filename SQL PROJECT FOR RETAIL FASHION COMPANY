@@ -1,0 +1,113 @@
+Problem Statement:
+ABC Fashion is a leading retailer with a vast customer base and a team of dedicated sales
+representatives. They have a Sales Order Processing System that helps manage customer
+orders and interactions.
+Dataset:
+Find the below information and the script for the table creation and record insertion.
+https://docs.google.com/document/d/1ngN7Q0Mpo8j5BXidNHGRHmgbMSuG5XcFYnp_gD3woL
+A/edit?usp=sharing
+
+--CREATION OF OREDERS TABLE
+	
+	CREATE TABLE Orders(OrderId int, CustomerId int, SalesmanId int, Orderdate Date, Amount money)
+
+----1)INSERT A NEW RECORD IN ORDERS TABLE
+
+  INSERT INTO Orders Values 
+  (5001,2345,101,'2021-07-01',550),
+  (5003,1234,105,'2022-02-15',1500),
+  (5004,1355,106,'2022-03-16',1800)
+
+
+
+  -----2)Add Primary key constraint for SalesmanId column in Salesman table. Add default
+-constraint for City column in Salesman table. Add Foreign key constraint for SalesmanId
+-column in Customer table. Add not null constraint in Customer_name column for the
+-Customer table
+
+
+CREATE TABLE Salesman
+(
+SalesmanId INT Primary key,
+Name VARCHAR(255) NOT NULL,
+Commission DECIMAL(10, 2),
+City VARCHAR(255) DEFAULT'CALIFORNIA',
+Age INT
+);
+
+SELECT*FROM Salesman
+
+INSERT INTO Salesman (SalesmanId, Name, Commission, City, Age)
+VALUES
+    (101, 'Joe', 50, 'California', 17),
+    (102, 'Simon', 75, 'Texas', 25),
+    (103, 'Jessie', 105, 'Florida', 35),
+    (104, 'Danny', 100, 'Texas', 22),
+    (105, 'Lia', 65, 'New Jersey', 30)
+
+	
+CREATE TABLE Customer (
+    SalesmanId INT Primary key,
+    CustomerId INT,
+    CustomerName VARCHAR(255) NOT NULL,
+    PurchaseAmount INT,
+    FOREIGN KEY (SalesmanId) REFERENCES Customer (SalesmanId)
+);
+
+INSERT INTO Customer (SalesmanId, CustomerId, CustomerName, PurchaseAmount)
+VALUES
+    (101, 2345, 'Andrew', 550),
+    (103, 1575, 'Lucky', 4500),
+    (104, 2345, 'Andrew', 4000),
+    (107, 3747, 'Remona', 2700),
+    (110, 4004, 'Julia', 4545);
+	
+	
+
+ ------ 3)Fetch the data where the Customer’s name is ending with ‘N’ also get the purchase
+---------------amount value greater than 500.
+ 
+ SELECT*FROM customer WHERE customername like'%N' OR PURCHASEAMOUNT>=500
+
+
+
+
+
+ ---4)(2)USING SET OPERATOR RESULT CONTAINING SALESMANID WITH DUPLICATES FROM TWO TABLES
+
+SELECT SalesmanID FROM Salesman
+INTERSECT
+SELECT SalesmanID FROM Customer
+
+
+-----5)Display the below columns which has the matching data.Orderdate, Salesman Name, Customer Name, Commission, and City which has the
+  ---range of Purchase Amount between 500 to 1500.
+
+
+SELECT B.Orderdate,C.Name as SALESMAN_NAME, A.CustomerName,C.Commission,C.City,A.PurchaseAmount FROM Customer A,Orders B,Salesman C
+WHERE A.SalesmanId=B.SalesmanId and A.SalesmanId=C.SalesmanId and (A.PurchaseAmount between 500 and 1500) and B.SalesmanId in (SELECT SalesmanID FROM Salesman
+INTERSECT 
+SELECT SalesmanID FROM Customer
+INTERSECT
+SELECT SalesmanID FROM Orders);
+
+
+-----OR
+
+
+
+
+
+SELECT Orderdate,Name,CustomerName,PurchaseAmount,City,Commission FROM Salesman
+inner join Customer on Salesman.SalesmanId = Customer.SalesmanId 
+inner join Orders on Salesman.SalesmanId = Orders.SalesmanId
+where Customer.PurchaseAmount between 500 and 1500
+
+
+----6)Using right join fetch all the results from Salesman and Orders table.
+
+
+SELECT*from Salesman right join Orders ON Salesman.SalesmanId=Orders.SalesmanId
+
+
+
